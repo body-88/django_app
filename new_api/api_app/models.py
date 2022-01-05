@@ -47,5 +47,4 @@ class DocumentRequest(models.Model):
     )
     time = models.DateTimeField(auto_now_add=True)
     status_request = models.PositiveSmallIntegerField(choices=STATUS_VARIANTS, default=INITIATED_STATUS)
-    file = models.FileField(upload_to="media/", null=True, blank=True, )
- # validators =[FileExtensionValidator(allowed_extensions=['pdf'])]
+    file = models.FileField(upload_to="media/", null=True, blank=True, validators =[FileExtensionValidator(allowed_extensions=['pdf'])])
