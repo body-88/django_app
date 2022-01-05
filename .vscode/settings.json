@@ -1,7 +1,0 @@
-{
-    "python.testing.pytestArgs": [
-        "new_api"
-    ],
-    "python.testing.unittestEnabled": false,
-    "python.testing.pytestEnabled": true
-}
