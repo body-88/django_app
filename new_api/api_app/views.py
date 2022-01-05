@@ -2,6 +2,8 @@ from functools import partial
 from django.conf import settings
 from django.db.models import fields
 from django.db.models.query import QuerySet
+from django.http import request
+from django.http.response import Http404
 from django.shortcuts import get_object_or_404, render
 from rest_framework import serializers, viewsets, filters
 from rest_framework import permissions
@@ -51,7 +53,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
 
 class DocumentRequestListAPIView(generics.ListAPIView):
-    queryset = DocumentRequest.objects.all()
+    queryset = DocumentRequest.objects.select_related("from_user").all()
     serializer_class = DocumentRequestSerializer
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
     filterset_fields = ["status_request"]
@@ -61,12 +63,23 @@ class DocumentRequestListAPIView(generics.ListAPIView):
 
 class DocumentRequestCreateAPIView(generics.CreateAPIView):
     serializer_class = DocumentRequestSerializer
-
+    # def validate(self, data):
+    #     to_user = data['to_user'] 
+    #     from_user = data['from_user']
+    #     if to_user == from_user:
+    #         raise serializers.ValidationError('brr')
+    #     return data
+   
     def perform_create(self, serializer):
-        serializer.save(
-            from_user=self.request.user, status_request=DocumentRequest.INITIATED_STATUS
-        )
-
+        
+       
+            serializer.save(
+        from_user=self.request.user, status_request=DocumentRequest.INITIATED_STATUS
+            )
+            
+        
+        
+    
 
 class SentDocumentRequestListAPIView(generics.ListAPIView):
     serializer_class = DocumentRequestSerializer
@@ -77,7 +90,7 @@ class SentDocumentRequestListAPIView(generics.ListAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        return DocumentRequest.objects.filter(
+        return DocumentRequest.objects.select_related("from_user").filter(
             from_user=user, status_request=DocumentRequest.INITIATED_STATUS
         )
 
@@ -91,7 +104,7 @@ class RepliedDocumentRequestListAPIView(generics.ListAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        return DocumentRequest.objects.filter(
+        return DocumentRequest.filter(
             from_user=user, status_request=DocumentRequest.RECEIVED_STATUS
         )
 

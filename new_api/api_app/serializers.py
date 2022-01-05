@@ -1,5 +1,5 @@
 from django.db.models import fields
-from rest_framework import serializers
+from rest_framework import request, serializers
 from rest_framework.fields import CurrentUserDefault
 from api_app.models import User, UserProfile, DocumentRequest
 
@@ -47,8 +47,11 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
 class DocumentRequestSerializer(serializers.ModelSerializer):
     # from_user = serializers.HiddenField(default=serializers.CurrentUserDefault())
-
+    from_user = serializers.EmailField(read_only=True)
+    # to_user = serializers.EmailField(read_only=True, source='to_user')
+    
     class Meta:
+        
         model = DocumentRequest
         fields = (
             "from_user",
@@ -57,9 +60,19 @@ class DocumentRequestSerializer(serializers.ModelSerializer):
             "status_request",
         )
         read_only_fields = (
-            "from_user",
             "status_request",
+            
+            
         )
+    
+    def validate(self, data):
+        
+        
+        if data['to_user'] == self.context['request'].user:
+            raise serializers.ValidationError('You cannot send request to yourself')
+   
+        return data
+    
 
 
 class DocumentReceivedSerializer(serializers.ModelSerializer):

@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db.models.fields import CharField
 from django.utils.translation import gettext_lazy as _
 from django.conf import settings
+from django.core.validators import FileExtensionValidator
 
 # Create your models here.
 
@@ -45,5 +46,6 @@ class DocumentRequest(models.Model):
         on_delete=models.CASCADE,
     )
     time = models.DateTimeField(auto_now_add=True)
-    status_request = models.CharField(max_length=50, choices=STATUS_VARIANTS)
-    file = models.FileField(upload_to="media/", null=True, blank=True)
+    status_request = models.PositiveSmallIntegerField(choices=STATUS_VARIANTS, default=INITIATED_STATUS)
+    file = models.FileField(upload_to="media/", null=True, blank=True, )
+ # validators =[FileExtensionValidator(allowed_extensions=['pdf'])]

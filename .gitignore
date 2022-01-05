@@ -1,2 +1,10 @@
 django_app_1
 vscode
+.vscode
+.env
+media
+__pycache__
+*.log
+*.pot
+*.pyc
+.pytest_cache
