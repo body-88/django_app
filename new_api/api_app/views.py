@@ -63,17 +63,9 @@ class DocumentRequestListAPIView(generics.ListAPIView):
 
 class DocumentRequestCreateAPIView(generics.CreateAPIView):
     serializer_class = DocumentRequestSerializer
-    # def validate(self, data):
-    #     to_user = data['to_user'] 
-    #     from_user = data['from_user']
-    #     if to_user == from_user:
-    #         raise serializers.ValidationError('brr')
-    #     return data
-   
+      
     def perform_create(self, serializer):
-        
-       
-            serializer.save(
+        serializer.save(
         from_user=self.request.user, status_request=DocumentRequest.INITIATED_STATUS
             )
             
@@ -104,7 +96,7 @@ class RepliedDocumentRequestListAPIView(generics.ListAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        return DocumentRequest.filter(
+        return DocumentRequest.objects.filter(
             from_user=user, status_request=DocumentRequest.RECEIVED_STATUS
         )
 

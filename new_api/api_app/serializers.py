@@ -61,16 +61,12 @@ class DocumentRequestSerializer(serializers.ModelSerializer):
         )
         read_only_fields = (
             "status_request",
-            
-            
+
         )
     
     def validate(self, data):
-        
-        
         if data['to_user'] == self.context['request'].user:
             raise serializers.ValidationError('You cannot send request to yourself')
-   
         return data
     
 
